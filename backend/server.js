@@ -9,12 +9,17 @@ import videoRoutes from './routes/videos.js';
 
 config();
 connectDB();
-
+const app = express();
 
 // app.use(cors({
 //   origin: ["https://video-summarize-ei3b.vercel.app","http://localhost:3000"],
 //   credentials: true,
 // }));
+
+
+
+
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -32,7 +37,6 @@ app.use(
   })
 );
 
-const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
