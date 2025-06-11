@@ -10,7 +10,7 @@ export default function RegisterPage() {
   const handle = async (e) => {
     e.preventDefault();
     await register({ name: "", email, password });
-    // After register, you may redirect to login
+    
   };
 
   return (

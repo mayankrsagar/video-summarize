@@ -1,7 +1,7 @@
 "use client";
 import useSWR from 'swr';
 
-import { fetchHistory } from '../../lib/api';
+import { fetchHistory } from '@/lib/api';
 
 export default function HistoryPage() {
   const { data, error } = useSWR("history", fetchHistory);
