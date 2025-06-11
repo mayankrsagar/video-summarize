@@ -1,7 +1,7 @@
-'use client';
+"use client";
 import { useState } from 'react';
 
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/authContext';
 import {
   fetchMetadata,
   summarize,
@@ -9,70 +9,57 @@ import {
 
 export default function HomePage() {
   const { user } = useAuth();
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [meta, setMeta] = useState(null);
-  const [summary, setSummary] = useState('');
+  const [summary, setSummary] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+
+  if (!user) return <p className="text-center mt-20 text-xl">Please login first.</p>;
 
   const handleFetch = async () => {
     try {
-      setError('');
       const res = await fetchMetadata(url);
       setMeta(res.data);
-    } catch (err) {
-      setError('Failed to fetch metadata: ' + (err.response?.data?.message || err.message));
+      setSummary("");
+    } catch (e) {
+      setError(e.response?.data.error || e.message);
     }
   };
 
   const handleSummarize = async () => {
+    setLoading(true);
     try {
-      setError('');
-      setLoading(true);
       const res = await summarize(url);
       setSummary(res.data.video.summary);
-    } catch (err) {
-      setError('Failed to summarize: ' + (err.response?.data?.message || err.message));
+    } catch (e) {
+      setError(e.response?.data.error || e.message);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!user) return <div>Loading...</div>;
-
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl mb-4">Video Insight Summarizer</h1>
-      
-      {error && <div className="text-red-500 mb-4">{error}</div>}
-      
-      <input
-        type="text"
-        placeholder="YouTube URL"
-        value={url}
-        onChange={e => setUrl(e.target.value)}
-        className="border p-2 w-full mb-2"
-      />
-      <button 
-        onClick={handleFetch} 
-        className="bg-green-500 text-white px-4 py-2 mr-2 disabled:opacity-50"
-        disabled={!url}
-      >
-        Fetch Metadata
-      </button>
-      
+      {error && <p className="text-red-500">{error}</p>}
+      <div className="mt-4">
+        <input
+          type="text"
+          placeholder="YouTube URL"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          className="border rounded p-2 w-full"
+        />
+        <button onClick={handleFetch} disabled={!url} className="btn-blue mt-2">Fetch</button>
+      </div>
       {meta && (
-        <div className="mt-4">
-          <h2 className="text-xl">{meta.title}</h2>
-          <img src={meta.thumbnail} alt="thumbnail" className="my-2 max-w-xs" />
-          <button 
-            onClick={handleSummarize} 
-            disabled={loading} 
-            className="bg-blue-500 text-white px-4 py-2 disabled:opacity-50"
-          >
-            {loading ? 'Summarizing...' : 'Summarize'}
+        <div className="mt-6">
+          <h2 className="font-semibold">{meta.title}</h2>
+          <img src={meta.thumbnail} alt="" className="mt-2 rounded" />
+          <button onClick={handleSummarize} disabled={loading} className="btn-blue mt-4">
+            {loading ? "Summarizing..." : "Summarize"}
           </button>
-          {summary && <pre className="bg-gray-100 p-4 mt-4 whitespace-pre-wrap">{summary}</pre>}
+          {summary && <pre className="bg-white p-4 rounded mt-4 whitespace-pre-wrap">{summary}</pre>}
         </div>
       )}
     </div>

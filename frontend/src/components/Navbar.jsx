@@ -1,13 +1,12 @@
-'use client';
+"use client";
 import Link from 'next/link';
 
-import { useAuth } from '@/context/authContext';
+import { useAuth } from '../context/authContext';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-
   return (
-    <nav className="bg-gray-800 text-white p-4 flex justify-between">
+    <nav className="bg-gray-800 p-4 text-white flex justify-between">
       <div className="space-x-4">
         <Link href="/">Home</Link>
         <Link href="/history">History</Link>
